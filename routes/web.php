@@ -11,13 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/test', [
-    'uses' => 'TestController@index' , 
-    'as' => 'test.index'
+Route::get('/', [
+    'uses' => 'StudentController@index' , 
+    'as' => 'students.index'
 ]);
 
 Route::get('/students', [
@@ -25,6 +21,24 @@ Route::get('/students', [
     'as' => 'students.index'
 ]);
 
-Auth::routes();
+Route::get('/attendance', [
+	'uses' => 'AttendanceController@index' , 
+    'as' => 'attendance.index'
+]);
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::post('/attendance', [
+	'uses' => 'AttendanceController@index' , 
+    'as' => 'attendance.index'
+]);
+
+Route::get('/messages', [
+	'uses' => 'AttendanceController@messages' , 
+    'as' => 'messages.index'
+]);
+
+Route::get('/groups', [
+	'uses' => 'GroupController@index' , 
+    'as' => 'groups.index'
+]);
+
+Auth::routes();

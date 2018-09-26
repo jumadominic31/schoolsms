@@ -6,5 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
-    protected $table = 'userinfo';
+    protected $table = 'USERINFO';
+
+    // public function attendance()
+    // {
+    //     return $this->hasMany('App\Attendance');
+    // }
 }

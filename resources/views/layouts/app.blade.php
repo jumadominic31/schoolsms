@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Fuel Station App') }}</title>
+    <title>{{ config('app.name', 'School SMS') }}</title>
 
     <!-- Styles -->
     <!--<link rel="stylesheet" type="text/css" href="{{ URL::to('css/bootstrap.min.css') }}">-->

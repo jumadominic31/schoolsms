@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Checkinout extends Model
+class Group extends Model
 {
-    protected $table = 'checkinout';
+    protected $table = 'DEPARTMENTS';
 }
