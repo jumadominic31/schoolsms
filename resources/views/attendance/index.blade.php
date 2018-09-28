@@ -6,17 +6,20 @@
 <strong>Filter Options: </strong>
 <input type="checkbox" autocomplete="off" onchange="checkfilter(this.checked);"/>
 <div id="filteroptions" style="display: none ;">
-  
-</div>
-
     {!! Form::open(['action' => 'AttendanceController@index', 'method' => 'POST']) !!}
     <table class="table" width="100%" table-layout="fixed">
         <tbody>
             <tr>
                 <td width="33.3%">
                     <div class="form-group">
-                        {{Form::label('student_id', 'Student Name')}}
-                        {{Form::select('student_id', ['' => ''] + $students, '', ['class' => 'form-control', 'USERID' => 'student_id'])}}
+                        {{Form::label('student_name', 'Student Name')}}
+                        {{Form::text('student_name', '', ['class' => 'form-control'])}}
+                    </div>
+                </td>
+                <td width="33.3%">
+                    <div class="form-group">
+                        {{Form::label('group_id', 'Group Name')}}
+                        {{Form::select('group_id', ['' => ''] + $groups, '', ['class' => 'form-control'])}}
                     </div>
                 </td>
                 <td width="33.3%">
@@ -25,7 +28,6 @@
                         {{Form::select('checktype', ['' => '', 'I' => 'IN', 'O' => 'OUT'] , '', ['class' => 'form-control'])}}
                     </div>
                 </td>
-                <td></td>
             </tr>
             <tr>
                 <td >
@@ -46,6 +48,8 @@
     </table>
 
     {{Form::submit('Submit', ['class'=>'btn btn-primary', 'name' => 'submitBtn'])}}  
+</div>
+
 <br><br>
 <table class="table table-striped" >
     <tr>

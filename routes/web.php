@@ -31,14 +31,44 @@ Route::post('/attendance', [
     'as' => 'attendance.index'
 ]);
 
-Route::get('/messages', [
-	'uses' => 'AttendanceController@messages' , 
-    'as' => 'messages.index'
+Route::get('/attendance/sendcustommsg', [
+	'uses' => 'AttendanceController@sendcustommsg' , 
+    'as' => 'attendance.sendcustommsg'
 ]);
 
 Route::get('/groups', [
 	'uses' => 'GroupController@index' , 
     'as' => 'groups.index'
+]);
+
+Route::get('/dashboard', [
+	'uses' => 'DashboardController@index' , 
+    'as' => 'dashboard.index'
+]);
+
+Route::get('/reports/smsusage', [
+	'uses' => 'AttendanceController@smsusage' , 
+    'as' => 'reports.smsusage'
+]);
+
+Route::get('/reports/groupattendance', [
+	'uses' => 'AttendanceController@groupattendance' , 
+    'as' => 'reports.groupattendance'
+]);
+
+Route::get('/reports/studentattendance', [
+	'uses' => 'AttendanceController@studentattendance' , 
+    'as' => 'reports.studentattendance'
+]);
+
+Route::get('/admin/schooldetails', [
+	'uses' => 'AdminController@schooldetails' , 
+    'as' => 'admin.schooldetails'
+]);
+
+Route::get('/admin/users', [
+	'uses' => 'AdminController@users' , 
+    'as' => 'admin.users'
 ]);
 
 Auth::routes();
