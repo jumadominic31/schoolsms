@@ -13,7 +13,7 @@
             <!-- Branding Image -->
             <a class="navbar-brand" 
                 href="{{ route('dashboard.index') }}">
-                School Name
+                Nyamonye Girls Sec School
             </a>
         </div>
 
@@ -31,18 +31,19 @@
                 <li><a href="{{ route('groups.index') }}">Groups</a></li>
                 <li><a href="{{ route('attendance.sendcustommsg') }}">Send Custom Message</a></li>
                 <li>
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ route('admin.schooldetails') }}">School Details</a></li>
-                        <li><a href="{{ route('admin.users') }}">Portal Users</a></li>
+                        <li><a href="{{ route('reports.groupattendance') }}">Attendance Per Group</a></li>
+                        <li><a href="{{ route('reports.studentattendance') }}">Attendance Per Student</a></li>
                     </ul>
                 </li>
                 <li>
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports <span class="caret"></span></a>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        <li><a href="{{ route('reports.smsusage') }}">SMS Usage</a></li>
-                        <li><a href="{{ route('reports.groupattendance') }}">Attendance Per Group</a></li>
-                        <li><a href="{{ route('reports.studentattendance') }}">Attendance Per Student</a></li>
+                        <li><a href="{{ route('admin.schooldetails') }}">School Details</a></li>
+                        <li><a href="{{ route('admin.msgsetup') }}">Message Setup</a></li>
+                        <li><a href="{{ route('admin.smsengsetup') }}">SMS Engine Setup</a></li>
+                        <li><a href="{{ route('admin.users') }}">Portal Users</a></li>
                     </ul>
                 </li>
             </ul>

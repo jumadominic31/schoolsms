@@ -81,7 +81,7 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="well dash-box">
-                        <h2><span class="glyphicon glyphicon-user" aria-hidden="true"></span>  </h2>
+                        <h2><span class="glyphicon glyphicon-user" aria-hidden="true"></span>{{$bal}}</h2>
                         <h4>SMS Balance</h4>
                     </div>
                 </div>
