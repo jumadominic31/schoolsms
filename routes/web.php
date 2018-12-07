@@ -11,94 +11,114 @@
 |
 */
 
-Route::get('/', [
-    'uses' => 'DashboardController@index' , 
-    'as' => 'dashboard.index'
+//signin
+Route::get('/users/signin', [
+    'uses' => 'UsersController@getSignin',
+    'as' => 'users.signin'
 ]);
 
-Route::get('/students', [
-	'uses' => 'StudentController@index' , 
-    'as' => 'students.index'
+Route::post('/users/signin', [
+    'uses' => 'UsersController@postSignin',
+    'as' => 'users.signin'
 ]);
 
-Route::get('/attendance', [
-	'uses' => 'AttendanceController@index' , 
-    'as' => 'attendance.index'
-]);
+Route::group(['middleware' => 'auth'] , function () {
 
-Route::post('/attendance', [
-	'uses' => 'AttendanceController@index' , 
-    'as' => 'attendance.index'
-]);
+    Route::get('/users/logout', [
+        'uses' => 'UsersController@getLogout',
+        'as' => 'users.logout'
+    ]);
 
-Route::get('/attendance/sendcustommsg', [
-	'uses' => 'AttendanceController@sendcustommsg' , 
-    'as' => 'attendance.sendcustommsg'
-]);
+    Route::get('/', [
+        'uses' => 'DashboardController@index' , 
+        'as' => 'dashboard.index'
+    ]);
 
-Route::post('/attendance/postcustommsg', [
-    'uses' => 'AttendanceController@postcustommsg' , 
-    'as' => 'attendance.postcustommsg'
-]);
+    Route::get('/students', [
+    	'uses' => 'StudentController@index' , 
+        'as' => 'students.index'
+    ]);
 
-Route::get('/attendance/sendmsg', [
-    'uses' => 'AttendanceController@sendmsg' , 
-    'as' => 'attendance.sendmsg'
-]);
+    Route::post('/students', [
+        'uses' => 'StudentController@index' , 
+        'as' => 'students.index'
+    ]);
 
-Route::get('/groups', [
-	'uses' => 'GroupController@index' , 
-    'as' => 'groups.index'
-]);
+    Route::get('/attendance', [
+    	'uses' => 'AttendanceController@index' , 
+        'as' => 'attendance.index'
+    ]);
 
-Route::get('/dashboard', [
-	'uses' => 'DashboardController@index' , 
-    'as' => 'dashboard.index'
-]);
+    Route::post('/attendance', [
+    	'uses' => 'AttendanceController@index' , 
+        'as' => 'attendance.index'
+    ]);
 
-Route::get('/reports/smsusage', [
-	'uses' => 'AttendanceController@smsusage' , 
-    'as' => 'reports.smsusage'
-]);
+    Route::get('/attendance/sendcustommsg', [
+    	'uses' => 'AttendanceController@sendcustommsg' , 
+        'as' => 'attendance.sendcustommsg'
+    ]);
 
-Route::get('/reports/groupattendance', [
-	'uses' => 'AttendanceController@groupattendance' , 
-    'as' => 'reports.groupattendance'
-]);
+    Route::post('/attendance/postcustommsg', [
+        'uses' => 'AttendanceController@postcustommsg' , 
+        'as' => 'attendance.postcustommsg'
+    ]);
 
-Route::get('/reports/studentattendance', [
-	'uses' => 'AttendanceController@studentattendance' , 
-    'as' => 'reports.studentattendance'
-]);
+    Route::get('/attendance/sendmsg', [
+        'uses' => 'AttendanceController@sendmsg' , 
+        'as' => 'attendance.sendmsg'
+    ]);
 
-Route::get('/admin/schooldetails', [
-	'uses' => 'AdminController@schooldetails' , 
-    'as' => 'admin.schooldetails'
-]);
+    Route::get('/groups', [
+    	'uses' => 'GroupController@index' , 
+        'as' => 'groups.index'
+    ]);
 
-Route::get('/admin/users', [
-	'uses' => 'AdminController@users' , 
-    'as' => 'admin.users'
-]);
+    Route::get('/dashboard', [
+    	'uses' => 'DashboardController@index' , 
+        'as' => 'dashboard.index'
+    ]);
 
-Route::get('/admin/msgsetup', [
-    'uses' => 'AdminController@msgsetup' , 
-    'as' => 'admin.msgsetup'
-]);
+    Route::get('/school', [
+    	'uses' => 'AdminController@schooldetails' , 
+        'as' => 'school.index'
+    ]);
 
-Route::match(array('PUT', 'PATCH'), '/admin/msgsetup/update', [
-    'uses' => 'AdminController@updatemsg' , 
-    'as' => 'admin.updatemsg'
-]);
+    Route::get('/school/edit', [
+        'uses' => 'AdminController@editschool' , 
+        'as' => 'school.edit'
+    ]);
 
-Route::get('/admin/smsengsetup', [
-    'uses' => 'AdminController@smsengsetup' , 
-    'as' => 'admin.smsengsetup'
-]);
+    Route::match(array('PUT', 'PATCH'), '/school/update', [
+        'uses' => 'AdminController@updateschool' , 
+        'as' => 'school/update'
+    ]);
+    Route::get('/admin/msgsetup', [
+        'uses' => 'AdminController@msgsetup' , 
+        'as' => 'admin.msgsetup'
+    ]);
 
-Route::match(array('PUT', 'PATCH'), '/admin/smsengsetup/update', [
-    'uses' => 'AdminController@updatesmseng' , 
-    'as' => 'admin.updatesmseng'
-]);
+    Route::match(array('PUT', 'PATCH'), '/admin/msgsetup/update', [
+        'uses' => 'AdminController@updatemsg' , 
+        'as' => 'admin.updatemsg'
+    ]);
 
-Auth::routes();
+    Route::get('/admin/smsengsetup', [
+        'uses' => 'AdminController@smsengsetup' , 
+        'as' => 'admin.smsengsetup'
+    ]);
+
+    Route::match(array('PUT', 'PATCH'), '/admin/smsengsetup/update', [
+        'uses' => 'AdminController@updatesmseng' , 
+        'as' => 'admin.updatesmseng'
+    ]);
+
+    //users
+    Route::get('/users/profile', [
+        'uses' => 'UsersController@getProfile',
+        'as' => 'users.profile'
+    ]);
+    
+    //users admin
+    Route::resource('users', 'UsersController');
+});

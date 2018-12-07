@@ -4,7 +4,6 @@
 
 <h1>School Details</h1>
 
-<div>
 <table class="table table-striped" >
     <tr>
     	<td>School Name</td>
@@ -28,28 +27,27 @@
     </tr>
     <tr>
     	<td>Boarding</td>
-    	@if ($schooldetails->boarding == '0')
+    	@if ($schooldetails->boarding == 0)
     		<td>Day</td>
-    	@elseif ($schooldetails->boarding == '1')
+    	@elseif ($schooldetails->boarding == 1)
     		<td>Boarding</td>
-    	@else ($schooldetails->boarding == '2')
+    	@else ($schooldetails->boarding == 2)
     		<td>Day and Boarding</td>
     	@endif
     </tr>
     <tr>
     	<td>Gender</td>
-    	@if ($schooldetails->gender == '0')
+    	@if ($schooldetails->gender == 0)
     		<td>Male</td>
-    	@elseif ($schooldetails->gender == '1')
+    	@elseif ($schooldetails->gender == 1)
     		<td>Female</td>
-    	@else ($schooldetails->gender == '2')
+    	@else ($schooldetails->gender == 2)
     		<td>Mixed</td>
     	@endif
     </tr>
 
 </table>
-
-</div>
+<a class="btn btn-default" href="{{ route('school.edit') }}">Edit Details</a>
 
 
 @endsection

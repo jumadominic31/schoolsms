@@ -6,13 +6,53 @@ use Illuminate\Http\Request;
 use App\School;
 use App\SmsApi;
 use App\MsgTemplate;
+use Auth;
 
 class AdminController extends Controller
 {
     public function schooldetails()
     {
     	$schooldetails = School::where('id', '=', '1')->first();
-        return view('admin.schooldetails', ['schooldetails' => $schooldetails]);
+        return view('school.index', ['schooldetails' => $schooldetails]);
+    }
+
+    public function editschool()
+    {
+        $school_id = Auth::user()->school_id;
+        $school = School::where('id', '=', 1)->first();
+        return view('school.edit', ['school'=> $school]);
+    }
+
+    public function updateschool(Request $request)
+    {
+        $user = Auth::user();
+        $user_id = $user->id;
+
+        $this->validate($request, [
+            'name' => 'required',
+            'address' => 'required',
+            'town' => 'required',
+            'boarding' => 'required',
+            'gender' => 'required',
+            'telephone' => ['required', 'regex:/^[0-9]{12}$/']
+        ]);
+        
+        $email = $request->input('email');
+        $school = School::find('1');
+        $school->name = $request->input('name');
+        $school->address = $request->input('address');
+        $school->town = $request->input('town');
+        $school->boarding = $request->input('boarding');
+        $school->gender = $request->input('gender');
+        $school->telephone = $request->input('telephone');
+        if ($email != NULL)
+        {
+            $school->email = $email;
+        }
+        $school->updated_by = $user_id;
+        $school->save();
+        
+        return redirect('/school')->with('success', 'School details updated');
     }
 
     public function users()

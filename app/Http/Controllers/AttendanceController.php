@@ -10,6 +10,7 @@ use App\Group;
 use App\SmsApi;
 use App\MsgTemplate;
 use App\StatusReason;
+use Excel;
 
 class AttendanceController extends Controller
 {
@@ -22,7 +23,9 @@ class AttendanceController extends Controller
         $groups = Group::orderBy('DEPTNAME')->pluck('DEPTNAME', 'DEPTID')->all();
     	
     	$student_name = $request->input('student_name');
-        $group_id = $request->input('group_id');
+        $admno = $request->input('admno');
+        $class = $request->input('class');
+        $stream = $request->input('stream');
     	$checktype = $request->input('checktype');
     	$first_date = $request->input('first_date');
     	$last_date = $request->input('last_date');
@@ -30,16 +33,24 @@ class AttendanceController extends Controller
     	if ($request->isMethod('POST'))
     	{
 	    	$attendances = Attendance::join('USERINFO', 'CHECKINOUT.USERID', '=', 'USERINFO.USERID')
-	    					->select('CHECKINOUT.USERID', 'USERINFO.NAME', 'CHECKINOUT.CHECKTIME', 'CHECKINOUT.CHECKTYPE')
+	    					->select('USERINFO.Admno', 'USERINFO.NAME', 'CHECKINOUT.CHECKTIME', 'CHECKINOUT.CHECKTYPE',  'USERINFO.Class', 'USERINFO.Stream')
                             ->orderBy('CHECKINOUT.CHECKTIME', 'desc');
 	    	
 	    	if ($student_name != NULL)
 	    	{
 	    		$attendances = $attendances->where('USERINFO.NAME', 'like', '%'.$student_name.'%');
 	    	}
-            if ($group_id != NULL)
+            if ($admno != NULL)
             {
-                $attendances = $attendances->where('USERINFO.DEFAULTDEPTID', '=', $group_id);
+                $attendances = $attendances->where('USERINFO.Admno', '=', $admno);
+            }
+            if ($class != NULL)
+            {
+                $attendances = $attendances->where('USERINFO.Class', '=', $class);
+            }
+            if ($stream != NULL)
+            {
+                $attendances = $attendances->where('USERINFO.Stream', '=', $stream);
             }
 	    	if ($checktype != NULL)
 	    	{
@@ -61,13 +72,20 @@ class AttendanceController extends Controller
                 $attendances = $attendances->where(DB::raw('CONVERT(date, CHECKINOUT.CHECKTIME)'), '=', $curr_date);
             }
 
-	    	$attendances = $attendances->get();				
+	    	$attendances = $attendances->get();		
+            if ($request->submitBtn == 'Export_XLS') {
+                Excel::create('attendances', function($excel) use($attendances) {
+                    $excel->sheet('Sheet 1', function($sheet) use($attendances) {
+                        $sheet->fromArray($attendances);
+                    });
+                })->export('xls');
+            }		
 	    }
 
 	    else 
 	    {
 	    	$attendances = Attendance::join('USERINFO', 'CHECKINOUT.USERID', '=', 'USERINFO.USERID')
-	    					->select('CHECKINOUT.USERID', 'USERINFO.NAME', 'CHECKINOUT.CHECKTIME', 'CHECKINOUT.CHECKTYPE')
+	    					->select('CHECKINOUT.USERID', 'USERINFO.NAME', 'CHECKINOUT.CHECKTIME', 'CHECKINOUT.CHECKTYPE', 'USERINFO.Admno', 'USERINFO.Class', 'USERINFO.Stream')
                             ->orderBy('CHECKINOUT.CHECKTIME', 'desc')
 	    					->where(DB::raw('CONVERT(date, CHECKINOUT.CHECKTIME)'), '=', $curr_date)
 	    					->get();
@@ -114,29 +132,6 @@ class AttendanceController extends Controller
         $checkinout->save();
 
         return redirect('/attendance/sendcustommsg')->with('success', 'Message Sent' . $checkinout->id);
-    }
-
-    //this page shows the SMS usage and balance
-    public function smsusage()
-    {
-    	$sentmsgnum = Attendance::where('SentSMS', '=', '1')->count();
-        return view('reports.smsusage', ['sentmsgnum' => $sentmsgnum]);
-    }
-
-    //this page display a report for the attendance filtered by group (e.g. all form 4 students) and period
-    public function groupattendance()
-    {
-        $sentmsgnum = Attendance::where('SentSMS', '=', '1')->count();
-        // Attendance summary per day
-        // Attendance::select(DB::raw('CONVERT(date, CHECKTIME) AS CHECKTIME'), DB::raw('count(*) as tot') )->where('SentSMS', '=',  '1' )->WHERE('CHECKTYPE', '=', 'I')->groupBy(DB::raw('CAST(CHECKTIME AS DATE)'))->get();
-        return view('reports.groupattendance', ['sentmsgnum' => $sentmsgnum]);
-    }
-    
-    //this page display a report for the attendance filtered by individual student and period
-    public function studentattendance()
-    {
-        $sentmsgnum = Attendance::where('SentSMS', '=', '1')->count();
-        return view('reports.studentattendance', ['sentmsgnum' => $sentmsgnum]);
     }
 
     //this function checks and sends an SMS if required for new checkin/out
