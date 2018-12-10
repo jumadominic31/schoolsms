@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use App\User;
 use Auth;
 use Session;
@@ -13,7 +14,7 @@ class UsersController extends Controller
     
     public function index()
     {
-        $users = User::paginate(10);
+        $users = User::where('id', '!=', '1')->paginate(10);
         return View('users.index')->with('users', $users);
     }
 
@@ -72,6 +73,32 @@ class UsersController extends Controller
         return view('users.profile', ['user' => $user]);
     }
 
+    public function resetpass(){
+        return view('users.resetpass');
+    }
+
+    public function postResetpass(Request $request) {
+        $this->validate($request, [
+            'curr_password' => 'required',
+            'new_password_1' => 'required|same:new_password_1',
+            'new_password_2' => 'required|same:new_password_1'
+        ]);
+
+        $current_password = Auth::User()->password;
+
+        if(Hash::check($request->input('curr_password'), $current_password)){
+            $request->user()->fill([
+                'password' => Hash::make($request->input('new_password_1'))
+            ])->save();
+            return redirect('/users/profile')->with('success', 'Password Changed');
+        } 
+
+        else {
+            return redirect('/users/resetpass')->with('error', 'Current password incorrect');
+        }
+
+    }
+
     public function create()
     {
         return view('users.create');
@@ -108,7 +135,7 @@ class UsersController extends Controller
     public function edit($id)
     {
         $school_id = Auth::user()->school_id;
-        $user = User::where('school_id','=',$school_id)->find($id);
+        $user = User::where('school_id','=',$school_id)->where('id', '!=', '1')->find($id);
         if ($user == null){
             return redirect('/users')->with('error', 'User not found');
         }

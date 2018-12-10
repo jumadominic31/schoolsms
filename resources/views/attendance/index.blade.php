@@ -47,7 +47,7 @@
                 <td>
                     <div class="form-group">
                         {{Form::label('first_date', 'Start Date')}}
-                        {{Form::text('first_date', '', ['class' => ' first_date form-control', 'placeholder' => 'yyyy-mm-dd'])}}
+                        {{Form::text('first_date', '', ['class' => 'date form-control', 'placeholder' => 'yyyy-mm-dd'])}}
                     </div>
                 </td>
             </tr>
@@ -55,7 +55,7 @@
                 <td >
                     <div class="form-group">
                         {{Form::label('last_date', 'Last Date')}}
-                        {{Form::text('last_date', '', ['class' => 'last_date form-control', 'placeholder' => 'yyyy-mm-dd'])}}
+                        {{Form::text('last_date', '', ['class' => 'date form-control', 'placeholder' => 'yyyy-mm-dd'])}}
                     </div>
                 </td>
                 <td></td>

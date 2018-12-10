@@ -29,7 +29,6 @@ class AdminController extends Controller
         $user_id = $user->id;
 
         $this->validate($request, [
-            'name' => 'required',
             'address' => 'required',
             'town' => 'required',
             'boarding' => 'required',
@@ -39,7 +38,6 @@ class AdminController extends Controller
         
         $email = $request->input('email');
         $school = School::find('1');
-        $school->name = $request->input('name');
         $school->address = $request->input('address');
         $school->town = $request->input('town');
         $school->boarding = $request->input('boarding');

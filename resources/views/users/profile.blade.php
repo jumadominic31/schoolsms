@@ -30,7 +30,7 @@
     	
     	<div class="panel-footer">
         	<a href="#" class="btn btn-success">Edit User Details</a>
-        	<a href="#" class="btn btn-success">Reset Password</a>
+        	<a href="{{ route('users.resetpass') }}" class="btn btn-success">Reset Password</a>
         </div>
       
         

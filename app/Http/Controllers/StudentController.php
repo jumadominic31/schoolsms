@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Student;
 use Excel;
 
@@ -19,7 +20,7 @@ class StudentController extends Controller
 
     	if ($request->isMethod('POST'))
     	{
-	    	$students = Student::select('Admno', 'NAME', 'GENDER', 'ParentName', 'Class', 'Stream')->orderBy('Admno', 'asc');
+	    	$students = Student::select('Admno', 'NAME', DB::raw("(CASE WHEN (GENDER = 0) THEN 'Male' ELSE 'Female' END) as GENDER"), 'OPHONE', 'ParentName', 'Class', 'Stream')->orderBy('Admno', 'asc');
 	    	
 	    	if ($admno != NULL)
 	    	{
@@ -60,7 +61,7 @@ class StudentController extends Controller
 
 	    else 
 	    {
-	    	$students = Student::select('Admno', 'NAME', 'GENDER', 'ParentName', 'Class', 'Stream')->get();
+	    	$students = Student::select('Admno', 'NAME', DB::raw("(CASE WHEN (GENDER = 0) THEN 'Male' ELSE 'Female' END) as GENDER"), 'OPHONE', 'ParentName', 'Class', 'Stream')->get();
 	    	
 	    }
 

@@ -28,7 +28,7 @@
                     <a class="btn btn-lg btn-primary" href="{{ route('attendance.sendcustommsg') }}" role="button">Send Custom Message</a></p>
                 </div>
                 <div class="col-sm-3" style="text-align: center;">
-                    <a class="btn btn-lg btn-primary" href="#" role="button">Track Shipment</a></p>
+                    <a class="btn btn-lg btn-primary" href="{{ route('attendance.sendmsg') }}" role="button">Sync SMS</a></p>
                 </div>
                 <div class="col-sm-3" style="text-align: center;">
                 </div>

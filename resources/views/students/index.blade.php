@@ -78,7 +78,7 @@
     <tr>
         <td>{{$student['Admno']}}</td>
         <td>{{$student['NAME']}}</td>
-        <td><?php if ($student['GENDER'] == 1 ) {echo "Female";} else {echo "Male";} ?></td>
+        <td>{{$student['GENDER']}}</td>
         <td>{{$student['ParentName']}}</td>
         <td>{{$student['OPHONE']}}</td>
         <td>{{$student['Class']}}</td>

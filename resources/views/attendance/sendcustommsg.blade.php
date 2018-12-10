@@ -25,29 +25,47 @@
         <tr>
             <td >
                 <div class="form-group">
-                    {{Form::label('student_id', 'Name')}}
-                    {{Form::select('student_id', ['' => ''] + $students, '', ['class' => 'form-control'])}}
-                </div>
-            </td>
-            <td >
-            </td>
-        </tr>
-        <tr>
-            <td >
-                <div class="form-group">
-                    {{Form::label('admno', 'Admission No')}}
-                    {{Form::text('admno', '', ['class' => 'form-control'])}}
+                    {{Form::label('admno', 'Admission No (5 digits)')}}
+                    {{Form::text('admno', '', ['id' => 'admno', 'class' => 'form-control'])}}
                 </div>
             </td>
             <td >
                 <div class="form-group">
                     {{Form::label('student_name', 'Student Name')}}
-                    {{Form::text('student_name', '', ['class' => 'form-control', 'disabled' => 'true'])}}
+                    {{Form::text('student_name', '', ['id' => 'student_name', 'class' => 'form-control', 'disabled' => 'true'])}}
                 </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="form-group">
+                    {{Form::label('msg', 'Message')}}
+                    {{Form::textarea('msg', $msg, ['class' => 'form-control', 'cols' => '50', 'rows' => '3'])}}
+                </div>
+            </td>
+            <td>
             </td>
         </tr>
     </tbody>
 </table>
 {{Form::submit('Submit', ['class'=>'btn btn-primary', 'name' => 'submitBtn'])}}  
+
+<script type="text/javascript">
+    $(document).on('keyup', '#admno', function(e) {
+        e.preventDefault();
+        var admno = this.value;
+        if (admno.length >= 5) {
+            $.get('/attendance/getstudentname/'+admno, function(data){
+                if (Object.keys(data).length == 0){
+                    $("#student_name").val('Invalid admission number');
+                }
+                else {
+                    $("#student_name").val(data);
+                }
+                
+            });
+        }
+    });
+</script>
 
 @endsection

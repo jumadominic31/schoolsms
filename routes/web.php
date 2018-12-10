@@ -22,6 +22,11 @@ Route::post('/users/signin', [
     'as' => 'users.signin'
 ]);
 
+Route::get('/schedsendmsg', [
+    'uses' => 'AttendanceController@schedsendmsg' , 
+    'as' => 'attendance.schedsendmsg'
+]);
+
 Route::group(['middleware' => 'auth'] , function () {
 
     Route::get('/users/logout', [
@@ -62,6 +67,11 @@ Route::group(['middleware' => 'auth'] , function () {
     Route::post('/attendance/postcustommsg', [
         'uses' => 'AttendanceController@postcustommsg' , 
         'as' => 'attendance.postcustommsg'
+    ]);
+
+    Route::get('/attendance/getstudentname/{admno}', [
+        'uses' => 'AttendanceController@getstudentname' , 
+        'as' => 'attendance.getstudentname'
     ]);
 
     Route::get('/attendance/sendmsg', [
@@ -117,6 +127,16 @@ Route::group(['middleware' => 'auth'] , function () {
     Route::get('/users/profile', [
         'uses' => 'UsersController@getProfile',
         'as' => 'users.profile'
+    ]);
+
+    Route::get('/users/resetpass', [
+        'uses' => 'UsersController@resetpass',
+        'as' => 'users.resetpass'
+    ]);
+
+    Route::post('/users/resetpass', [
+        'uses' => 'UsersController@postResetpass',
+        'as' => 'users.postResetindividualpass'
     ]);
     
     //users admin
