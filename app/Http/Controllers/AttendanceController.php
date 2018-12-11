@@ -121,7 +121,7 @@ class AttendanceController extends Controller
         $this->validate($request, [
             'status' => 'required',
             'reason' => 'required',
-            'admno' => 'required'          
+            'indv_grp' => 'required'          
         ]);
 
         $curr_datetime = date('Y-m-d h:m:s'); 
@@ -131,76 +131,90 @@ class AttendanceController extends Controller
         $student_name = $request->input('student_name');
         $admno = $request->input('admno');
         $message = $request->input('msg');
+        $class_name = $request->input('class_name');
+        $indv_grp = $request->input('indv_grp');
 
-        $student_id = Student::select('USERID')->where('Admno', '=', $admno)->pluck('USERID')->first();
-
-        if ( $student_id == NULL)
+        if ($indv_grp == 0) //individual //get student name, gender, admno, guardian phone
         {
-            return redirect()->back()->with('error', 'Invalid admission number');
+            $student = Student::select('USERINFO.USERID', 'USERINFO.OPHONE', 'USERINFO.NAME', 'USERINFO.GENDER', 'USERINFO.Admno')
+                        ->where('USERINFO.Admno', '=', $admno)
+                        ->get()->toArray();
         }
-
-        $checkinout = new Attendance;
-        $checkinout->USERID = $student_id;
-        $checkinout->CHECKTIME = $curr_datetime;
-        $checkinout->CHECKTYPE = $status == '0' ? 'O' : 'I';
-        $checkinout->VERIFYCODE = 1;
-        $checkinout->SENSORID = 104;
-        $checkinout->Memoinfo = $reason;
-        $checkinout->WorkCode = 0;
-        $checkinout->sn = '';
-        $checkinout->UserExtFmt = 0;
-        $checkinout->SentSMS = 1;
-        $checkinout->updated_at = $curr_datetime;
-        $checkinout->save();
-
-        //get student name, gender, admno, guardian phone
-        $student = Student::select('USERINFO.OPHONE', 'USERINFO.NAME', 'USERINFO.GENDER', 'USERINFO.Admno')                       
-                        ->where('USERINFO.USERID', '=', $student_id)
-                        ->first();
-
-        //get reason
-        $reason_det = StatusReason::where('id', '=', $reason)->pluck('description', 'id')->first();
-
-        $phone = $student->OPHONE;
-        $checktype = $checkinout->CHECKTYPE == 'I' ? 'in' : 'out';
-        $name = $student->NAME;
-        $checktime = $checkinout->CHECKTIME;
-        $gender = $student->GENDER == '0' ? 'son' : 'daughter';
-        $admno = $student->Admno;
-
-        $variables = array('name' => $name, 'clockdatetime' => $checktime, 'gender' => $gender, 'admno' => $admno, 'reason' => $reason_det, 'in to/out of' => $checktype);
-
-        foreach($variables as $key => $value){
-            $message = str_replace('{'.$key.'}', $value, $message);
-        }
-        
-        $recipients = "+". $phone;
-
-        $from = $apidetails->atgsender_id;
-
-        $gateway    = new AfricasTalkingGateway($atgusername, $atgapikey);
-        
-        try 
-        { 
-          $results = $gateway->sendMessage($recipients, $message, $from);
-                    
-          foreach($results as $result) {
-
-            echo " Number: " .$result->number;
-            echo " Status: " .$result->status;
-            echo " StatusCode: " .$result->statusCode;
-            echo " MessageId: " .$result->messageId;
-            echo " Cost: "   .$result->cost."\n";
-          } 
-
-            // $checkinout = Attendance::find($checkinout->id);
-            // $checkinout->SentSMS = 1;
-            // $checkinout->save();
-          
-        }
-        catch ( AfricasTalkingGatewayException $e )
+        else if ($indv_grp == 1) //group
         {
-          echo "Encountered an error while sending: ".$e->getMessage();
+            $student = Student::select('USERINFO.USERID', 'USERINFO.OPHONE', 'USERINFO.NAME', 'USERINFO.GENDER', 'USERINFO.Admno')
+                        ->where('USERINFO.Class', '=', $class_name)
+                        ->get()->toArray();
+        }
+
+        if ( empty($student) )
+        {
+            return redirect()->back()->with('error', 'Input a valid admission number/class or no students in class chosen');
+        }
+
+        $count = count($student); 
+
+        if ($count > 0)
+        {
+            foreach ($student as $item)
+            {
+                $checkinout = new Attendance;
+                $checkinout->USERID = $item['USERID'];
+                $checkinout->CHECKTIME = $curr_datetime;
+                $checkinout->CHECKTYPE = $status == '0' ? 'O' : 'I';
+                $checkinout->VERIFYCODE = 1;
+                $checkinout->SENSORID = 104;
+                $checkinout->Memoinfo = $reason;
+                $checkinout->WorkCode = 0;
+                $checkinout->sn = '';
+                $checkinout->UserExtFmt = 0;
+                $checkinout->SentSMS = 1;
+                $checkinout->updated_at = $curr_datetime;
+                $checkinout->save();
+
+                //get reason
+                $reason_det = StatusReason::where('id', '=', $reason)->pluck('description', 'id')->first();
+
+                $phone = $item['OPHONE'];
+                $checktype = $status == 'O' ? 'out' : 'in';
+                $name = $item['NAME'];
+                $checktime = $curr_datetime;
+                $gender = $item['GENDER'] == '0' ? 'son' : 'daughter';
+                $admno = $item['Admno'];
+
+                $variables = array('name' => $name, 'clockdatetime' => $checktime, 'gender' => $gender, 'admno' => $admno, 'reason' => $reason_det, 'in to/out of' => $checktype);
+
+                foreach ($variables as $key => $value){
+                    $message = str_replace('{'.$key.'}', $value, $message);
+                }
+                
+                $recipients = "+". $phone;
+
+                $from = $apidetails->atgsender_id;
+
+                $gateway    = new AfricasTalkingGateway($atgusername, $atgapikey);
+                
+                try 
+                { 
+                  $results = $gateway->sendMessage($recipients, $message, $from);
+                            
+                  foreach($results as $result) {
+
+                    echo " Number: " .$result->number;
+                    echo " Status: " .$result->status;
+                    echo " StatusCode: " .$result->statusCode;
+                    echo " MessageId: " .$result->messageId;
+                    echo " Cost: "   .$result->cost."\n";
+                  } 
+                  
+                }
+                catch ( AfricasTalkingGatewayException $e )
+                {
+                  echo "Encountered an error while sending: ".$e->getMessage();
+                }
+                //reinitialize message
+                $message = $request->input('msg');
+            }
         }
 
         return redirect('/attendance/sendcustommsg')->with('success', 'Message Sent');

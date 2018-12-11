@@ -43,52 +43,21 @@
         </div>
         <div class="panel-body">
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <a href="{{ route('students.index') }}" style='text-decoration: none; color: black'>
                         <div class="well dash-box">
-                            <h2><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span>{{$num_students}}</h2>
+                            <h2><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span> {{$num_students}}</h2>
                             <h4>Total Students</h4>
                         </div>
                     </a>
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <a href="" style='text-decoration: none; color: black'>
                         <div class="well dash-box">
-                            <h2><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span>{{$checkedin}}</h2>
-                            <h4>Arrived on Time</h4>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-sm-4">
-                    <a href="" style='text-decoration: none; color: black'>
-                        <div class="well dash-box">
-                            <h2><span class="glyphicon glyphicon-inbox" aria-hidden="true"></span>{{$late}}</h2>
-                            <h4>Late/Absent</h4>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-sm-4">
-                	<a href="{{ route('groups.index') }}" style='text-decoration: none; color: black'>
-	                    <div class="well dash-box">
-	                        <h2><span class="glyphicon glyphicon-user" aria-hidden="true"></span>{{$num_groups}}</h2>
-	                        <h4>Total Groups</h4>
-	                    </div>
-	                </a>
-                </div>
-                <div class="col-sm-4">
-                    <div class="well dash-box">
-                        <h2><span class="glyphicon glyphicon-user" aria-hidden="true"></span>{{$bal}}</h2>
+                        <h2><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{$bal}}</h2>
                         <h4>SMS Balance</h4>
                     </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="well dash-box">
-                        
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>

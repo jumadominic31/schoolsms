@@ -42,8 +42,8 @@
                 </td>
                 <td>
                     <div class="form-group">
-                        {{Form::label('class', 'Form')}}
-                        {{Form::select('class', ['' => '', '1' => '1', '2' => '2', '3' => '3', '4' => '4'], '', ['class' => 'form-control'])}}
+                        {{Form::label('class_name', 'Form')}}
+                        {{Form::select('class_name', ['' => '', '1' => '1', '2' => '2', '3' => '3', '4' => '4'], '', ['class' => 'form-control'])}}
                     </div>
                 </td>
                 <td>

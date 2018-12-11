@@ -23,27 +23,40 @@
             </td>
         </tr>
         <tr>
-            <td >
+            <td>
                 <div class="form-group">
+                    {{Form::label('indv_grp', 'Individual or Group Message')}}
+                    {{Form::select('indv_grp', ['' => '', '0' => 'Individual', '1' => 'Group'], '', ['class' => 'form-control', 'id' => 'indv_grp'])}}
+                </div>
+            </td>
+            <td >
+                <div class="form-group" id="class_name_div" style="display:none">
+                    {{Form::label('class_name', 'Class/Form')}}
+                    {{Form::select('class_name', ['' => '', '1' => '1', '2' => '2', '3' => '3', '4' => '4'], '', ['id' => 'class_name', 'class' => 'form-control'])}}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td >
+                <div class="form-group admno_div" style="display:none">
                     {{Form::label('admno', 'Admission No (5 digits)')}}
                     {{Form::text('admno', '', ['id' => 'admno', 'class' => 'form-control'])}}
                 </div>
             </td>
             <td >
-                <div class="form-group">
+                <div class="form-group admno_div" style="display:none">
                     {{Form::label('student_name', 'Student Name')}}
                     {{Form::text('student_name', '', ['id' => 'student_name', 'class' => 'form-control', 'disabled' => 'true'])}}
                 </div>
             </td>
         </tr>
         <tr>
+            
             <td>
                 <div class="form-group">
                     {{Form::label('msg', 'Message')}}
                     {{Form::textarea('msg', $msg, ['class' => 'form-control', 'cols' => '50', 'rows' => '3'])}}
                 </div>
-            </td>
-            <td>
             </td>
         </tr>
     </tbody>
@@ -65,6 +78,23 @@
                 
             });
         }
+    });
+
+    $(document).ready(function(){
+        $('#indv_grp').on('change', function() {
+            if ( this.value == '1') {
+                $("#class_name_div").show();
+                $(".admno_div").hide();
+            }
+            else if ( this.value == '0'){
+                $(".admno_div").show();
+                $("#class_name_div").hide();
+            }
+            else if ( this.value == ''){
+                $(".admno_div").hide();
+                $("#class_name_div").hide();
+            }
+        });
     });
 </script>
 
