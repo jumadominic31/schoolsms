@@ -67,7 +67,7 @@
     $(document).on('keyup', '#admno', function(e) {
         e.preventDefault();
         var admno = this.value;
-        if (admno.length >= 5) {
+        if (admno.length >= 3) {
             $.get('/attendance/getstudentname/'+admno, function(data){
                 if (Object.keys(data).length == 0){
                     $("#student_name").val('Invalid admission number');

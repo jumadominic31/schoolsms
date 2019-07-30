@@ -49,6 +49,31 @@ Route::group(['middleware' => 'auth'] , function () {
         'as' => 'students.index'
     ]);
 
+    Route::get('/student/{admno}/edit', [
+        'uses' => 'StudentController@edit' , 
+        'as' => 'student.edit'
+    ]);
+
+    Route::get('/student/create', [
+        'uses' => 'StudentController@create',
+        'as' => 'student.create'
+    ]);
+
+    Route::post('/student/store', [
+        'uses' => 'StudentController@store' , 
+        'as' => 'student.store'
+    ]);
+
+    Route::match(array('PUT', 'PATCH'), '/student/{admno}', [
+        'uses' => 'StudentController@update' , 
+        'as' => 'student.update'
+    ]);
+
+    Route::post('/studentsImport', [
+        'uses' => 'StudentController@studentsImport' , 
+        'as' => 'students.import'
+    ]);    
+
     Route::get('/attendance', [
     	'uses' => 'AttendanceController@index' , 
         'as' => 'attendance.index'
@@ -101,8 +126,14 @@ Route::group(['middleware' => 'auth'] , function () {
 
     Route::match(array('PUT', 'PATCH'), '/school/update', [
         'uses' => 'AdminController@updateschool' , 
-        'as' => 'school/update'
+        'as' => 'school.update'
     ]);
+
+    Route::get('/admin/loadcredit', [
+        'uses' => 'AdminController@loadcredit' , 
+        'as' => 'admin.loadcredit'
+    ]);
+
     Route::get('/admin/msgsetup', [
         'uses' => 'AdminController@msgsetup' , 
         'as' => 'admin.msgsetup'

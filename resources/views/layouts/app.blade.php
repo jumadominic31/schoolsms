@@ -54,7 +54,11 @@
     <script src="{{ asset('js/bootstrap.js') }}"></script>
     <footer id="footer">
     <!-- style = "background:#333333;color:#ffffff;text-align:center;padding:30px;margin-top:30px;" -->
-        Developed by Avanet Technologies 2017    
+        Developed by Avanet Technologies &copy; <?php
+            $fromYear = 2015; 
+            $thisYear = (int)date('Y'); 
+            echo $fromYear . (($fromYear != $thisYear) ? '-' . $thisYear : '');
+        ?>    
     </footer>
 </body>
 </html>

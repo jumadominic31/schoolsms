@@ -10,6 +10,8 @@ use App\Group;
 use App\SmsApi;
 use App\MsgTemplate;
 use App\StatusReason;
+use App\Customsms;
+use Auth;
 use Excel;
 
 class AttendanceController extends Controller
@@ -106,7 +108,7 @@ class AttendanceController extends Controller
     {
         $reasons = StatusReason::pluck('description', 'id')->all();
         $students = Student::pluck('NAME', 'USERID')->all();
-        $msg = "Dear Parent, Your {gender} {name} Adm # {admno} will check {in to/out of} school today. Reason: {reason} \nThank you";
+        $msg = "Dear Parent, Your {gender} {name} Adm # {admno} will check {in-out} school today. Reason: {reason} \nThank you";
 
         return view('attendance.sendcustommsg', ['reasons' => $reasons, 'students' => $students, 'msg' => $msg]);
     }
@@ -114,6 +116,8 @@ class AttendanceController extends Controller
     //this function post the custom msg
     public function postcustommsg(Request $request)
     {
+        $user = Auth::user();
+        $user_id = $user->id;
         $apidetails = SmsApi::where('school_id', '=', '1')->first();
         $atgusername   = $apidetails->atgusername;
         $atgapikey     = $apidetails->atgapikey;
@@ -158,31 +162,23 @@ class AttendanceController extends Controller
         {
             foreach ($student as $item)
             {
-                $checkinout = new Attendance;
-                $checkinout->USERID = $item['USERID'];
-                $checkinout->CHECKTIME = $curr_datetime;
-                $checkinout->CHECKTYPE = $status == '0' ? 'O' : 'I';
-                $checkinout->VERIFYCODE = 1;
-                $checkinout->SENSORID = 104;
-                $checkinout->Memoinfo = $reason;
-                $checkinout->WorkCode = 0;
-                $checkinout->sn = '';
-                $checkinout->UserExtFmt = 0;
-                $checkinout->SentSMS = 1;
-                $checkinout->updated_at = $curr_datetime;
-                $checkinout->save();
-
                 //get reason
                 $reason_det = StatusReason::where('id', '=', $reason)->pluck('description', 'id')->first();
 
                 $phone = $item['OPHONE'];
-                $checktype = $status == 'O' ? 'out' : 'in';
+
+                // if ($phone == '')
+                // {
+                //     return redirect('/attendance/sendcustommsg')->with('error', 'No phone listed');
+                // }
+                
+                $checktype = $status == '0' ? 'out of' : 'in to';
                 $name = $item['NAME'];
                 $checktime = $curr_datetime;
                 $gender = $item['GENDER'] == '0' ? 'son' : 'daughter';
                 $admno = $item['Admno'];
 
-                $variables = array('name' => $name, 'clockdatetime' => $checktime, 'gender' => $gender, 'admno' => $admno, 'reason' => $reason_det, 'in to/out of' => $checktype);
+                $variables = array('name' => $name, 'clockdatetime' => $checktime, 'gender' => $gender, 'admno' => $admno, 'reason' => $reason_det, 'in-out' => $checktype);
 
                 foreach ($variables as $key => $value){
                     $message = str_replace('{'.$key.'}', $value, $message);
@@ -196,16 +192,23 @@ class AttendanceController extends Controller
                 
                 try 
                 { 
-                  $results = $gateway->sendMessage($recipients, $message, $from);
+                    $results = $gateway->sendMessage($recipients, $message, $from);
                             
-                  foreach($results as $result) {
+                    foreach($results as $result) {
 
-                    echo " Number: " .$result->number;
-                    echo " Status: " .$result->status;
-                    echo " StatusCode: " .$result->statusCode;
-                    echo " MessageId: " .$result->messageId;
-                    echo " Cost: "   .$result->cost."\n";
-                  } 
+                        echo " Number: " .$result->number;
+                        echo " Status: " .$result->status;
+                        echo " StatusCode: " .$result->statusCode;
+                        echo " MessageId: " .$result->messageId;
+                        echo " Cost: "   .$result->cost."\n";
+                    } 
+
+                    $customsms = new Customsms;
+                    $customsms->student_id = $item['USERID'];
+                    $customsms->message = $message;
+                    $customsms->checktype = $status;
+                    $customsms->updated_by = $user_id;
+                    $customsms->save();
                   
                 }
                 catch ( AfricasTalkingGatewayException $e )
@@ -246,7 +249,7 @@ class AttendanceController extends Controller
                 $checktype = $item['CHECKTYPE'];
                 $name = $item['NAME'];
                 $checktime = $item['CHECKTIME'];
-                $gender = $item['GENDER'] == 'Male' ? 'son' : 'daughter';
+                $gender = $item['GENDER'] == '0' ? 'son' : 'daughter';
                 $admno = $item['Admno'];
                 $variables = array('name' => $name, 'clockdatetime' => $checktime, 'gender' => $gender, 'admno' => $admno);
 

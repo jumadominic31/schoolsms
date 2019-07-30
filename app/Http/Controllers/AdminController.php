@@ -113,4 +113,9 @@ class AdminController extends Controller
 
         return redirect('/admin/smsengsetup')->with('success', 'Sms Engine Updated Successfully');
     }
+
+    public function loadcredit()
+    {
+        return view('admin.loadcredit');
+    }
 }

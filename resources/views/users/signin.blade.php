@@ -44,7 +44,11 @@
         </div>
       </div>
     <footer id="footer">
-        Developed by Avanet Technologies 2018    
+        Developed by Avanet Technologies &copy; <?php
+            $fromYear = 2015; 
+            $thisYear = (int)date('Y'); 
+            echo $fromYear . (($fromYear != $thisYear) ? '-' . $thisYear : '');
+        ?>        
     </footer>
 
   </body>

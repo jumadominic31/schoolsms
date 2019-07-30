@@ -3,7 +3,31 @@
 @section('content')
 
 <h1>Students</h1>
-<a href="{{ route('students.index') }}" class="btn btn-success">Reset</a>
+<div class="row">
+    <div class="col-md-2">
+        <a href="{{ route('students.index') }}" class="btn btn-success" style="margin-right: 15px;">Reset</a>
+    </div>
+    <div class="col-md-2">
+        <a href="{{ route('student.create') }}" class="btn btn-success" style="margin-right: 15px;">Add 1 Student</a>
+    </div>
+</div>
+<br>
+{!! Form::open(['action' => 'StudentController@studentsImport', 'method'=>'POST', 'files'=>'true']) !!}
+<div class="row">
+   <div class="col-xs-10 col-sm-10 col-md-10">
+        <div class="form-group">
+            {!! Form::label('students_file','Select File to Import:',['class'=>'col-md-3']) !!}
+            <div class="col-md-9">
+            {!! Form::file('students', ['class' => 'form-control', 'accept' => '.xls,.xlsx,.csv']) !!}
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-2 col-sm-2 col-md-2 text-center">
+    {!! Form::submit('Add Students from file',['class'=>'btn btn-success']) !!}
+    </div>
+</div>
+{!! Form::close() !!}
+
 <br>
 <h4>Filter Options: </h4>
 
@@ -73,6 +97,7 @@
         <th>Phone</th>
         <th>Form</th>
         <th>Stream</th>
+        <th></th>
     </tr>
     @foreach($students as $student)
     <tr>
@@ -83,6 +108,7 @@
         <td>{{$student['OPHONE']}}</td>
         <td>{{$student['Class']}}</td>
         <td>{{$student['Stream']}}</td>
+        <td><span class="center-block"><a class="pull-right btn btn-default" href="{{ route('student.edit', ['student' => $student->Admno ]) }}">Edit</a></span></td>
     </tr>
     @endforeach
 </table>
