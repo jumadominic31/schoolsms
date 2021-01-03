@@ -37,6 +37,10 @@
                         {{Form::label('stream', 'Stream')}}
                         {{Form::text('stream', $student->Stream, ['class' => 'form-control'])}}
                     </div>
+                    <div class="form-group">
+                        {{Form::label('boarder', 'Boarder *')}}
+                        {{Form::select('boarder', ['1' => 'Boarder', '0' => 'Day Scholar'], $student->boarder, ['class' => 'form-control', 'placeholder' => ''])}}
+                    </div>
                 {{Form::hidden('_method', 'PUT')}}
                 {{Form::submit('Submit', ['class'=>'btn btn-primary'])}}
                 {!! Form::close() !!}

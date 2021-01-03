@@ -226,6 +226,10 @@ class AttendanceController extends Controller
     //this function checks and sends an SMS if required for new checkin/out
     public function sendmsg()
     {
+        //update latecomers table 
+        
+
+
         //ATG username, apikey, sender_id
         $apidetails = SmsApi::where('school_id', '=', '1')->first();
         $msgtemplate = MsgTemplate::where('school_id', '=', '1')->first();
@@ -392,5 +396,14 @@ class AttendanceController extends Controller
         {
             return response()->json('No SMS to be sent');
         }
+    }
+
+    //this function will check for latecomers at a certain time and then populate the latecomers table
+    public function latecomers()
+    {
+        $latecomers = Student::select('USERINFO.USERID', 'USERINFO.OPHONE', 'USERINFO.NAME', 'USERINFO.GENDER', 'USERINFO.Admno')
+                        ->where('USERINFO.checkedin', '=', '0')
+                        ->get()->toArray();
+
     }
 }

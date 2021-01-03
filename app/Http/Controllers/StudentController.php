@@ -20,53 +20,50 @@ class StudentController extends Controller
     	$gender = $request->input('gender');
     	$class = $request->input('class');
     	$stream = $request->input('stream');
+        $boarder = $request->input('boarder');
 
-    	if ($request->isMethod('POST'))
+        $students = Student::select('Admno', 'NAME', DB::raw("(CASE WHEN (GENDER = 0) THEN 'Male' ELSE 'Female' END) as GENDER"), 'OPHONE', 'ParentName', 'Class', 'Stream', DB::raw("(CASE WHEN (boarder = 0) THEN 'N' ELSE 'Y' END) as boarder"))->orderBy('Admno', 'asc');
+    	
+        // $students = Student::select('Admno', 'NAME', DB::raw("(CASE WHEN (GENDER = 0) THEN 'Male' ELSE 'Female' END) as GENDER"), 'OPHONE', 'ParentName', 'Class', 'Stream')->orderBy('Admno', 'asc');
+    	
+    	if ($admno != NULL)
     	{
-	    	$students = Student::select('Admno', 'NAME', DB::raw("(CASE WHEN (GENDER = 0) THEN 'Male' ELSE 'Female' END) as GENDER"), 'OPHONE', 'ParentName', 'Class', 'Stream')->orderBy('Admno', 'asc');
-	    	
-	    	if ($admno != NULL)
-	    	{
-	    		$students = $students->where('Admno', 'like', '%'.$admno.'%');
-	    	}
-	    	if ($student_name != NULL)
-	    	{
-	    		$students = $students->where('NAME', 'like', '%'.$student_name.'%');
-	    	}
-	    	if ($parent_name != NULL)
-	    	{
-	    		$students = $students->where('ParentName', 'like', '%'.$parent_name.'%');
-	    	}
-	    	if ($gender != NULL)
-	    	{
-	    		$students = $students->where('GENDER', 'like', '%'.$gender.'%');
-	    	}
-	    	if ($class != NULL)
-	    	{
-	    		$students = $students->where('Class', 'like', '%'.$class.'%');
-	    	}
-	    	if ($stream != NULL)
-	    	{
-	    		$students = $students->where('Stream', 'like', '%'.$stream.'%');
-	    	}
-            
+    		$students = $students->where('Admno', 'like', '%'.$admno.'%');
+    	}
+    	if ($student_name != NULL)
+    	{
+    		$students = $students->where('NAME', 'like', '%'.$student_name.'%');
+    	}
+    	if ($parent_name != NULL)
+    	{
+    		$students = $students->where('ParentName', 'like', '%'.$parent_name.'%');
+    	}
+    	if ($gender != NULL)
+    	{
+    		$students = $students->where('GENDER', 'like', '%'.$gender.'%');
+    	}
+    	if ($class != NULL)
+    	{
+    		$students = $students->where('Class', 'like', '%'.$class.'%');
+    	}
+    	if ($stream != NULL)
+    	{
+    		$students = $students->where('Stream', 'like', '%'.$stream.'%');
+    	}
+        if ($boarder != NULL)
+        {
+            $students = $students->where('boarder', '=', $boarder);
+        }
+
+        if ($request->submitBtn == 'Export_XLS') {
             $students = $students->get();
-
-            if ($request->submitBtn == 'Export_XLS') {
-	            Excel::create('students', function($excel) use($students) {
-					$excel->sheet('Sheet 1', function($sheet) use($students) {
-						$sheet->fromArray($students);
-					});
-				})->export('xls');
-            }
-   				
-	    }
-
-	    else 
-	    {
-	    	$students = Student::select('Admno', 'NAME', DB::raw("(CASE WHEN (GENDER = 0) THEN 'Male' ELSE 'Female' END) as GENDER"), 'OPHONE', 'ParentName', 'Class', 'Stream')->get();
-	    	
-	    }
+            Excel::create('students', function($excel) use($students) {
+				$excel->sheet('Sheet 1', function($sheet) use($students) {
+					$sheet->fromArray($students);
+				});
+			})->export('xls');
+        }
+   		$students = $students->paginate(30);
 
         return view('students.index', ['students' => $students]);
     }
@@ -87,7 +84,8 @@ class StudentController extends Controller
         	'parent_name' => 'required',
         	'phone' => array('required', 'regex:/^[0-9]{12}$/'),
         	'class_name' => 'required',
-        	'stream' => 'required'
+        	'stream' => 'required',
+            'boarder' => 'required'
         ]);
         
         $user_id = Auth::user()->id;
@@ -100,6 +98,7 @@ class StudentController extends Controller
         $student->OPHONE = $request->input('phone');
         $student->Class = $request->input('class_name');
         $student->Stream = $request->input('stream');
+        $student->boarder = $request->input('boarder');
         $student->save();
 
         return redirect('/students')->with('success', 'Student details updated');
@@ -125,7 +124,8 @@ class StudentController extends Controller
                     if (in_array($value->admno, $curr_students))
                         continue;
                     $value->gender = strtolower($value->gender) == 'male' ? '0' : '1' ;
-                    $students_list[] = ['Admno' => $value->admno, 'BADGENUMBER' => $value->admno, 'NAME' => $value->name, 'GENDER' => $value->gender, 'ParentName' => $value->parentname, 'OPHONE' => $value->ophone, 'Class' => $value->class, 'Stream' => $value->stream];
+                    $value->boarder = strtolower($value->boarder) == 'N' ? '0' : '1' ;
+                    $students_list[] = ['Admno' => $value->admno, 'BADGENUMBER' => $value->admno, 'NAME' => $value->name, 'GENDER' => $value->gender, 'ParentName' => $value->parentname, 'OPHONE' => $value->ophone, 'Class' => $value->class, 'Stream' => $value->stream, 'boarder' => $value->boarder];
                 }
                 if(!empty($students_list)){
                     try {
@@ -161,7 +161,8 @@ class StudentController extends Controller
             'parent_name' => 'required',
             'phone' => array('required', 'regex:/^[0-9]{12}$/'),
             'class_name' => 'required',
-            'stream' => 'required'
+            'stream' => 'required',
+            'boarder' => 'required'
         ]);
 
         $student = new Student;
@@ -173,6 +174,7 @@ class StudentController extends Controller
         $student->OPHONE = $request->input('phone');
         $student->Class = $request->input('class_name');
         $student->Stream = $request->input('stream');
+        $student->boarder = $request->input('boarder');
         $student->save();
 
         return redirect('/students')->with('success', 'Student added');

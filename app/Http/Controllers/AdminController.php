@@ -12,15 +12,19 @@ class AdminController extends Controller
 {
     public function schooldetails()
     {
+        $user = Auth::user();
+        $user_id = $user->id;
     	$schooldetails = School::where('id', '=', '1')->first();
         return view('school.index', ['schooldetails' => $schooldetails]);
     }
 
     public function editschool()
     {
+        $user = Auth::user();
+        $user_id = $user->id;
         $school_id = Auth::user()->school_id;
-        $school = School::where('id', '=', 1)->first();
-        return view('school.edit', ['school'=> $school]);
+        $school = School::where('id', '=', '1')->first();
+        return view('school.edit', ['school'=> $school, 'user_id' => $user_id]);
     }
 
     public function updateschool(Request $request)
@@ -36,8 +40,13 @@ class AdminController extends Controller
             'telephone' => ['required', 'regex:/^[0-9]{12}$/']
         ]);
         
+        $name = $request->input('name');
         $email = $request->input('email');
         $school = School::find('1');
+        if ($name != NULL)
+        {
+            $school->name = $name;
+        }
         $school->address = $request->input('address');
         $school->town = $request->input('town');
         $school->boarding = $request->input('boarding');

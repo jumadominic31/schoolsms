@@ -34,7 +34,7 @@
 <input type="checkbox" autocomplete="off" onchange="checkfilter(this.checked);" />
 
 <div id="filteroptions" style="display: none ;">
-    {!! Form::open(['action' => 'StudentController@index', 'method' => 'POST']) !!}
+    {!! Form::open(['action' => 'StudentController@index', 'method' => 'GET']) !!}
     <table class="table" width="100%" table-layout="fixed">
         <tbody>
             <tr>
@@ -77,6 +77,16 @@
                     </div>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <div class="form-group">
+                        {{Form::label('boarder', 'Boarder')}}
+                        {{Form::select('boarder', [ '' => '','1' => 'Y', '0' => 'N'], '', ['class' => 'form-control'])}}
+                    </div>
+                </td>
+                <td></td>
+                <td></td>
+            </tr>
         </tbody>
     </table>
 
@@ -97,6 +107,7 @@
         <th>Phone</th>
         <th>Form</th>
         <th>Stream</th>
+        <th>Boarder</th>
         <th></th>
     </tr>
     @foreach($students as $student)
@@ -108,10 +119,12 @@
         <td>{{$student['OPHONE']}}</td>
         <td>{{$student['Class']}}</td>
         <td>{{$student['Stream']}}</td>
+        <td>{{$student['boarder']}}</td>
         <td><span class="center-block"><a class="pull-right btn btn-default" href="{{ route('student.edit', ['student' => $student->Admno ]) }}">Edit</a></span></td>
     </tr>
     @endforeach
 </table>
+{{ $students->appends(request()->input())->links() }}
 @else
     <p>No Students To Display</p>
 @endif

@@ -44,11 +44,6 @@ Route::group(['middleware' => 'auth'] , function () {
         'as' => 'students.index'
     ]);
 
-    Route::post('/students', [
-        'uses' => 'StudentController@index' , 
-        'as' => 'students.index'
-    ]);
-
     Route::get('/student/{admno}/edit', [
         'uses' => 'StudentController@edit' , 
         'as' => 'student.edit'

@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+        Commands\sendlatecomersms::class,
+        Commands\sendcheckinoutsms::class
     ];
 
     /**
@@ -24,8 +25,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('command:sendcheckinoutsms')
+                 ->everyTenMinutes()
+                 ->between('8:00', '20:00');
+        $schedule->command('command:sendcheckinoutsms')
+                 ->everyThirtyMinutes()
+                 ->between('20:30', '7:30');
     }
 
     /**

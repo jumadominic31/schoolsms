@@ -112,17 +112,23 @@ class UsersController extends Controller
         $this->validate($request, [
             'username' => 'required|unique:users',
             'name' => 'required',
+            'pass1' => 'required|same:pass1',
+            'pass2' => 'required|same:pass1',
             'telephone' => array('required', 'regex:/^[0-9]{12}$/'),
             'status' => 'required' 
         ]);
 
-        $password = 'sams123';
+        $password = $request->input('pass1');
+        $email = $request->input('email');
 
         $user = new User;
         $user->username = $request->input('username');
         $user->name = $request->input('name');
         $user->telephone = $request->input('telephone');
-        $user->email = $request->input('email');
+        if ($email != NULL)
+        {
+            $user->email = $email;
+        }
         $user->password = bcrypt($password);
         $user->school_id = $school_id;
         $user->status = $request->input('status');
@@ -151,15 +157,26 @@ class UsersController extends Controller
 
         $this->validate($request, [
             'name' => 'required',
+            'pass1' => 'same:pass1',
+            'pass2' => 'same:pass1',
             'telephone' => ['required', 'regex:/^[0-9]{12}$/'],
             'status' => 'required'
         ]);
         
+        $password = $request->input('pass1');
+        $email = $request->input('email');
         
         $user = User::find($id);
         $user->name = $request->input('name');
+        if ($password != NULL)
+        {
+            $user->password = bcrypt($password);
+        }
         $user->telephone = $request->input('telephone');
-        $user->email = $request->input('email');
+        if ($email != NULL)
+        {
+            $user->email = $email;
+        }
         $user->status = $request->input('status');
         $user->school_id = $school_id;
         $user->updated_by = $user_id;

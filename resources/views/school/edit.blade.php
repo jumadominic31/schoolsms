@@ -12,7 +12,11 @@
               {!!Form::open(['action' => ['AdminController@updateschool', $school->id],'method' => 'POST'])!!}
                 <div class="form-group">
                     {{Form::label('name', 'School Name')}}
+                    @if ($user_id == '1')
+                    {{Form::text('name', $school->name, ['class' => 'form-control'])}}
+                    @else
                     {{Form::text('name', $school->name, ['class' => 'form-control', 'disabled' => 'true'])}}
+                    @endif
                 </div>
                 <div class="form-group">
                     {{Form::label('telephone', 'Phone Number')}}

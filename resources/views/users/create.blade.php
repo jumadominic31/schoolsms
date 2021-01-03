@@ -14,6 +14,14 @@
             {{Form::text('name', '', ['class' => 'form-control', 'placeholder' => 'Name'])}}
         </div>
         <div class="form-group">
+            {{Form::label('pass1', 'Password *')}}
+            {{Form::password('pass1',  ['class' => 'form-control'])}}
+        </div>
+        <div class="form-group">
+            {{Form::label('pass2', 'Password Again *')}}
+            {{Form::password('pass2',  ['class' => 'form-control'])}}
+        </div>
+        <div class="form-group">
             {{Form::label('telephone', 'Telephone Number')}}
             {{Form::text('telephone', '', ['class' => 'form-control', 'placeholder' => 'Format example 254722000000'])}}
         </div>

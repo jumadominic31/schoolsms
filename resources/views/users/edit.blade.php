@@ -15,6 +15,14 @@
                     {{Form::text('name', $user->name, ['class' => 'form-control'])}}
                 </div>
                 <div class="form-group">
+                    {{Form::label('pass1', 'Password')}}
+                    {{Form::password('pass1',  ['class' => 'form-control'])}}
+                </div>
+                <div class="form-group">
+                    {{Form::label('pass2', 'Password Again')}}
+                    {{Form::password('pass2',  ['class' => 'form-control'])}}
+                </div>
+                <div class="form-group">
                     {{Form::label('telephone', 'Phone Number')}}
                     {{Form::text('telephone', $user->telephone, ['class' => 'form-control'])}}
                 </div>
