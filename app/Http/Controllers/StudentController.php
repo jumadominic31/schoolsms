@@ -18,7 +18,7 @@ class StudentController extends Controller
     	$student_name = $request->input('student_name');
     	$parent_name = $request->input('parent_name');
     	$gender = $request->input('gender');
-    	$class = $request->input('class');
+    	$class = $request->input('class_name');
     	$stream = $request->input('stream');
         $boarder = $request->input('boarder');
 
@@ -44,7 +44,7 @@ class StudentController extends Controller
     	}
     	if ($class != NULL)
     	{
-    		$students = $students->where('Class', 'like', '%'.$class.'%');
+    		$students = $students->where('Class', '=', $class);
     	}
     	if ($stream != NULL)
     	{
@@ -158,7 +158,6 @@ class StudentController extends Controller
             'admno' => 'required|unique:USERINFO',
             'name' => 'required',
             'gender' => 'required',
-            'parent_name' => 'required',
             'phone' => array('required', 'regex:/^[0-9]{12}$/'),
             'class_name' => 'required',
             'stream' => 'required',

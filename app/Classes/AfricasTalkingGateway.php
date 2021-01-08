@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Classes;
 
 use Illuminate\Http\Request;
 use Exception;

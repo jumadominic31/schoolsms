@@ -22,7 +22,7 @@
                         {{Form::select('gender', ['' => '', 0 => 'Male', 1 => 'Female'], 0, ['class' => 'form-control'])}}
                     </div>
                     <div class="form-group">
-                        {{Form::label('parent_name', 'Parent Name *')}}
+                        {{Form::label('parent_name', 'Parent Name')}}
                         {{Form::text('parent_name', '', ['class' => 'form-control', 'placeholder' => ''])}}
                     </div>
                     <div class="form-group">

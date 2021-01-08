@@ -7,12 +7,16 @@ use Illuminate\Support\Facades\DB;
 use App\Attendance;
 use App\Student;
 use App\Group;
+use App\School;
 use App\SmsApi;
 use App\MsgTemplate;
 use App\StatusReason;
 use App\Customsms;
 use Auth;
 use Excel;
+use PDF;
+use App\Classes\AfricasTalkingGateway;
+use App\Classes\AfricasTalkingGatewayException;
 
 class AttendanceController extends Controller
 {
@@ -20,78 +24,70 @@ class AttendanceController extends Controller
     public function index(Request $request)
     {
     	$curr_date = date('Y-m-d');
-
-    	// $students = Student::pluck('NAME', 'USERID')->all();
         $groups = Group::orderBy('DEPTNAME')->pluck('DEPTNAME', 'DEPTID')->all();
-    	
+        $sch_details = School::first();
+
     	$student_name = $request->input('student_name');
         $admno = $request->input('admno');
-        $class = $request->input('class');
+        $class = $request->input('class_name');
         $stream = $request->input('stream');
     	$checktype = $request->input('checktype');
-    	$first_date = $request->input('first_date');
-    	$last_date = $request->input('last_date');
+    	$att_date = $request->input('att_date');
 
-    	if ($request->isMethod('POST'))
-    	{
-	    	$attendances = Attendance::join('USERINFO', 'CHECKINOUT.USERID', '=', 'USERINFO.USERID')
-	    					->select('USERINFO.Admno', 'USERINFO.NAME', 'CHECKINOUT.CHECKTIME', 'CHECKINOUT.CHECKTYPE',  'USERINFO.Class', 'USERINFO.Stream')
-                            ->orderBy('CHECKINOUT.CHECKTIME', 'desc');
-	    	
-	    	if ($student_name != NULL)
-	    	{
-	    		$attendances = $attendances->where('USERINFO.NAME', 'like', '%'.$student_name.'%');
-	    	}
-            if ($admno != NULL)
-            {
-                $attendances = $attendances->where('USERINFO.Admno', '=', $admno);
-            }
-            if ($class != NULL)
-            {
-                $attendances = $attendances->where('USERINFO.Class', '=', $class);
-            }
-            if ($stream != NULL)
-            {
-                $attendances = $attendances->where('USERINFO.Stream', '=', $stream);
-            }
-	    	if ($checktype != NULL)
-	    	{
-	    		$attendances = $attendances->where('CHECKINOUT.CHECKTYPE', '=', $checktype);
-	    	}
-	    	if ($first_date != NULL)
-	    	{
-                if ($last_date != NULL)
-                {
-                    $attendances = $attendances->where(DB::raw('CONVERT(date, CHECKINOUT.CHECKTIME)'), '<=', $last_date)->where(DB::raw('CONVERT(date, CHECKINOUT.CHECKTIME)'),'>=',$first_date);
-                } 
-                else
-                {
-                    $attendances = $attendances->where(DB::raw('CONVERT(date, CHECKINOUT.CHECKTIME)'), '=', $first_date);
-                }
-            }
-            else
-            {
-                $attendances = $attendances->where(DB::raw('CONVERT(date, CHECKINOUT.CHECKTIME)'), '=', $curr_date);
-            }
+        $choices = ['class' => $class, 'stream' => $stream, 'checktype' => $checktype, 'att_date' => $att_date];
 
-	    	$attendances = $attendances->get();		
-            if ($request->submitBtn == 'Export_XLS') {
-                Excel::create('attendances', function($excel) use($attendances) {
-                    $excel->sheet('Sheet 1', function($sheet) use($attendances) {
-                        $sheet->fromArray($attendances);
-                    });
-                })->export('xls');
-            }		
-	    }
+        $attendances = Attendance::rightjoin('USERINFO as U1', 'CHECKINOUT.USERID', '=', 'U1.USERID')->select('U1.USERID', 'U1.NAME', 'CHECKINOUT.CHECKTIME', 'CHECKINOUT.CHECKTYPE', 'U1.Admno', 'U1.Class', 'U1.Stream');
 
-	    else 
-	    {
-	    	$attendances = Attendance::join('USERINFO', 'CHECKINOUT.USERID', '=', 'USERINFO.USERID')
-	    					->select('CHECKINOUT.USERID', 'USERINFO.NAME', 'CHECKINOUT.CHECKTIME', 'CHECKINOUT.CHECKTYPE', 'USERINFO.Admno', 'USERINFO.Class', 'USERINFO.Stream')
-                            ->orderBy('CHECKINOUT.CHECKTIME', 'desc')
-	    					->where(DB::raw('CONVERT(date, CHECKINOUT.CHECKTIME)'), '=', $curr_date)
-	    					->get();
-	    }
+        // $attendances = Student::leftjoin('CHECKINOUT as C1', 'C1.USERID', '=', 'USERINFO.USERID')->select('USERINFO.USERID', 'USERINFO.NAME', 'C1.CHECKTIME', 'C1.CHECKTYPE', 'USERINFO.Admno', 'USERINFO.Class', 'USERINFO.Stream')->orderBy('C1.CHECKTIME', 'desc');
+
+        if ($request->submitBtn ) {
+            $this->validate($request, [
+                'class_name' => 'required',
+                'att_date' => 'required'
+            ]);
+        } 	
+	    if ($att_date != NULL)
+        {
+            // $attendances = $attendances->where(function ($query) use ($att_date) { $query->where(DB::raw('CONVERT(date, C1.CHECKTIME)'), '=', $att_date)->orWhereNull('C1.USERID'); });
+            // $attendances = $attendances->leftJoin('CHECKINOUT as C2', function($join) use ($att_date) { $join->on('C2.USERID', '=', 'U1.USERID')->where(DB::raw('CONVERT(date, C1.CHECKTIME)'), '=', $att_date); });
+            $attendances = $attendances->where(DB::raw('CONVERT(date, CHECKINOUT.CHECKTIME)'), '=', $att_date);
+        }
+        else
+        {
+            // $attendances = $attendances->where(function ($query) use ($curr_date) { $query->where(DB::raw('CONVERT(date, C1.CHECKTIME)'), '=', $curr_date)->orWhereNull('C1.USERID'); });
+            // $attendances = $attendances->leftJoin('CHECKINOUT as C2', function($join) use ($curr_date) { $join->on('C2.USERID', '=', 'U1.USERID')->where(DB::raw('CONVERT(date, C1.CHECKTIME)'), '=', $curr_date); });
+            $attendances = $attendances->where(DB::raw('CONVERT(date, CHECKINOUT.CHECKTIME)'), '=', $att_date);
+        }				
+        if ($student_name != NULL)
+        {
+            $attendances = $attendances->where('U1.NAME', 'like', '%'.$student_name.'%');
+        }
+        if ($admno != NULL)
+        {
+            $attendances = $attendances->where('U1.Admno', '=', $admno);
+        }
+        if ($class != NULL)
+        {
+            $attendances = $attendances->where('U1.Class', '=', $class);
+        }
+        if ($stream != NULL)
+        {
+            $attendances = $attendances->where('U1.Stream', '=', $stream);
+        }
+        if ($checktype != NULL)
+        {
+            $attendances = $attendances->where('CHECKINOUT.CHECKTYPE', '=', $checktype);
+        }
+        // $attendances = $attendances->rightJoin('USERINFO as U2', function($join) { $join->on('U2.USERID', '=', 'CHECKINOUT.USERID'); });
+        
+
+        $attendances = $attendances->get()  ;	
+        
+        if ($request->submitBtn == 'DownloadRpt') {
+            $pdf = PDF::loadView('pdf.attendance', ['attendances' => $attendances, 'groups' => $groups, 'sch_details' => $sch_details, 'curr_date' => $curr_date, 'choices' => $choices]);
+            $pdf->setPaper('A4', 'portrait');
+            return $pdf->stream('attendance_report.pdf');
+        } 	
 
         return view('attendance.index', ['attendances' => $attendances, 'groups' => $groups]);
     }

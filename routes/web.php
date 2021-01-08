@@ -74,11 +74,6 @@ Route::group(['middleware' => 'auth'] , function () {
         'as' => 'attendance.index'
     ]);
 
-    Route::post('/attendance', [
-    	'uses' => 'AttendanceController@index' , 
-        'as' => 'attendance.index'
-    ]);
-
     Route::get('/attendance/sendcustommsg', [
     	'uses' => 'AttendanceController@sendcustommsg' , 
         'as' => 'attendance.sendcustommsg'

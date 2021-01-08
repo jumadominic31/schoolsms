@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Staudenmeir\EloquentParamLimitFix\ParamLimitFix;
 
 class Student extends Model
 {
@@ -13,8 +12,8 @@ class Student extends Model
 
     public $timestamps = false;
 
-    // public function attendance()
-    // {
-    //     return $this->hasMany('App\Attendance');
-    // }
+    public function attendance()
+    {
+        return $this->hasMany('App\Attendance');
+    }
 }

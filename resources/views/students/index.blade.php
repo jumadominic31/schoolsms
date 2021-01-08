@@ -100,6 +100,7 @@
 ?>
 <table class="table table-striped" >
     <tr>
+        <th></th>
         <th>Adm No</th>
         <th>Student Name</th>
         <th>Gender</th>
@@ -110,8 +111,9 @@
         <th>Boarder</th>
         <th></th>
     </tr>
-    @foreach($students as $student)
+    @foreach($students as $index => $student)
     <tr>
+        <td>{{$index + 1}}</td>
         <td>{{$student['Admno']}}</td>
         <td>{{$student['NAME']}}</td>
         <td>{{$student['GENDER']}}</td>
